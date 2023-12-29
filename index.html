@@ -1,31 +1,197 @@
+<!DOCTYPE html>
 <html>
 
 <head>
     <title>Nunam Wifi Setup</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
-<body> 
-    <h1>Nunam</h1> 
-    <h2>WiFi Configuration over Bluetooth</h2>
+<body>
 
-    <form id="form_connect"> 
-        <input id="connect_btn" type="submit" value="Connect to device">
-    </form> 
+    <div>
+        <img src="nlogo.png">
+        <h1>Nunam WiFi Configuration</h1>
+        <div id="multi-step-form-container">
+            <!-- Form Steps / Progress Bar -->
+            <ul class="form-stepper form-stepper-horizontal text-center mx-auto pl-0">
+                <!-- Step 1 -->
+                <li class="form-stepper-active text-center form-stepper-list" step="1">
+                    <a class="mx-2">
+                        <span class="form-stepper-circle">
+                            <span>1</span>
+                        </span>
+                        <div class="label">Connect</div>
+                    </a>
+                </li>
+                <!-- Step 2 -->
+                <li class="form-stepper-unfinished text-center form-stepper-list" step="2">
+                    <a class="mx-2">
+                        <span class="form-stepper-circle text-muted">
+                            <span>2</span>
+                        </span>
+                        <div class="label text-muted">Scan Wifi</div>
+                    </a>
+                </li>
+                <!-- Step 3 -->
+                <li class="form-stepper-unfinished text-center form-stepper-list" step="3">
+                    <a class="mx-2">
+                        <span class="form-stepper-circle text-muted">
+                            <span>3</span>
+                        </span>
+                        <div class="label text-muted">Sent</div>
+                    </a>
+                </li>
+            </ul>
+            <!-- Step Wise Form Content -->
+            <form id="userAccountSetupForm" name="userAccountSetupForm" enctype="multipart/form-data" method="POST">
+                <!-- Step 1 Content -->
+                <section id="step-1" class="form-step">
+                    <!-- Step 1 input fields -->
 
+                    <div id="permissions_text">
+                        <h2 class="font-normal">Permissions:</h2>
+                        <div class="mt-3">
+                            Note: Allow "Nearby Devices" permissions.
+                        </div>
+                    </div>
+
+                    <div id="connection-msg" style="display: none; font-size: 25px; font-weight: 500;"></div>
+
+                    <div class="mt-3">
+                        <button id="form_connect" class="button" type="button">Connect to Nunam Device</button>
+                        <button id="first_next_btn" class="button btn-navigate-form-step mt-3" type="button"
+                            step_number="2" style="display: none;">Next</button>
+                    </div>
+
+                    <div id="output" class="output" style="border:1px">
+                        <pre id="log"></pre>
+                    </div>
+
+                </section>
+                <section id="step-2" class="form-step d-none">
+                    <h2 class="font-normal"> Wifi Network Settings</h2>
+                    </br>
+
+                    <h3 id="config_complete" style="display: none;" class="font-normal">Wifi Configuration Completed
+                    </h3>
+
+                    <div id="scan_wifi_disable" class="mt-3">
+                        <button id="form_wifi_scan" class="button" type="button">Scan for Wifi Networks</button>
+
+                        <div id="after_scan_wifi" style="display: none;">
+                            <!-- <p>Select Network: <select id="ssid" size=1 placeholder="WiFi SSID"
+                                    style="min-width: 150px;" disabled></select></p>
+                            <p id="password_p">Password: <input id="password" size=17 placeholder="Password" disabled>
+                            </p> -->
+
+                            <p>Select Network:
+                                <select id="ssid" size="1" placeholder="WiFi SSID"
+                                    style="min-width: 200px; font-size: 16px;" disabled></select>
+                            </p>
+                            <p id="password_p">Password:
+                                <input id="password" size="17" placeholder="Password" style="font-size: 16px;" disabled>
+                            </p>
+
+                            <button id="form_wifi_config" class="button" type="button">Connect to Network</button>
+
+                        </div>
+
+
+                    </div>
+                    <div class="mt-3">
+                        <!-- <button class="button btn-navigate-form-step" type="button" step_number="1">Prev</button> -->
+
+                        <button id="scan_wifi_next_btn" class="button btn-navigate-form-step" type="button"
+                            step_number="3" style="display: none;">Next</button>
+                    </div>
+
+                    <div id="output" class="output" style="border:1px">
+                        <pre id="log"></pre>
+                    </div>
+
+                </section>
+                <!-- Step 3 Content, default hidden on page load. -->
+                <section id="step-3" class="form-step d-none">
+
+                    <h2 class="font-normal">Credentials sent to Nunam Device:
+                        </br>
+                        </br>
+                        <div id="wifi_connection-msg" style="display: none; font-size: 18px; font-weight: 500;"></div>
+
+                        <div id="wifi_pass" style="display: none; font-size: 18px; font-weight: 500;"></div>
+                        <i class="fa fa-check-circle" style="font-size:30px;color:green"></i>
+                    </h2>
+
+                    <div class="mt-3" style="display: flex; justify-content: center; align-items: center;">
+                        <!-- <button class="button submit-btn" type="click">Disconnect from Nunam</button> -->
+
+                        <!-- <button class="button btn-navigate-form-step submit-btn" type="button"
+                            onclick="onDisconnectButtonClick()" step_number="1">Disconnect
+                            from Nunam</button> -->
+                        <button class="button btn-navigate-form-step submit-btn" type="button" onclick="refreshPage()"
+                            step_number="1">Credentials Sent</button>
+                    </div>
+
+                </section>
+            </form>
+        </div>
+
+        <!-- <button id="help_btn" class="button" type="button" style="font-size: 20px;"> <i class="fa fa-question-circle"
+                style="font-size:20px;color:white"></i>
+            Help</button> -->
+
+        <button id="help_btn" class="button" type="button" style="font-size: 20px;"> <i class="fa fa-question-circle"
+                style="font-size:20px;color:white"></i>
+            Help</button>
+
+
+        <div id="help_window">
+            <span class="close_button" onclick="closeHelp()">&times;</span>
+            <h2>Follow these steps to connect Nunam device to Wi-Fi.</h2>
+            <h1 style="color: red;">Step-1</h1>
+
+            <img src="./instruction_img/1.png" alt="Step 1">
+            <img src="./instruction_img/2.png" alt="Step 2">
+            <img src="./instruction_img/3.png" alt="Step 3">
+            <h1 style="color: red;">Step-2</h1>
+            <img src="./instruction_img/4.png" alt="Step 4">
+
+            <img src="./instruction_img/5.png" alt="Step 5">
+            <img src="./instruction_img/6.png" alt="Step 6">
+            <h1 style="color: red;">Step-3</h1>
+            <img src="./instruction_img/7.png" alt="Step 7">
+
+
+        </div>
+
+
+
+
+
+
+
+    </div>
+
+
+    <!-- No Need to delete -->
+    <form id="form_connect">
+    </form>
     <form id="form_wifi_scan" style="display: none">
         <input id="wifi_scan_btn" type="submit" value="Scan for Networks" disabled>
     </form>
-
     <form id="form_wifi_config" style="display: none">
         <p>Network: <select id="ssid" size=1 placeholder="WiFi SSID" style="min-width: 150px;" disabled></select></p>
         <p id="password_p">Password: <input id="password" type="password" size=17 placeholder="Password" disabled></p>
         <p><input id="submit_credentials_btn" type="submit" value="Connect to Network" disabled></p>
     </form>
-
-    <h3>Log</h3>
     <div id="output" class="output" style="border:1px">
         <pre id="log"></pre>
     </div>
+    <!-- ------------------------ -->
+
 
     <script>
 
@@ -52,6 +218,32 @@
 
         var encoder = new TextEncoder();
 
+        function refreshPage() {
+            // Reload the current page
+            location.reload();
+        }
+
+
+
+        // Function to display the help window
+        function showHelp() {
+            document.getElementById('help_window').style.display = 'block';
+        }
+
+        // Function to close the help window
+        function closeHelp() {
+            document.getElementById('help_window').style.display = 'none';
+        }
+
+        // Attach the showHelp function to the click event of the help button
+        document.getElementById('help_btn').addEventListener('click', showHelp);
+
+
+        function handleConnectButtonClick() {
+
+            document.getElementById('userAccountSetupForm').submit();
+        }
+
         function onScanButtonClick() {
             if (argon_ble_device) {
                 argon_ble_device.gatt.getPrimaryService(uuid_wifi_config_service)
@@ -69,7 +261,7 @@
                                 // Logger.log('Added \'rx\' service listener');
                             })
                             .catch(error => {
-                                Logger.log('Argh! ' + error);
+                                Logger.log('Try Again! ' + error.name);
                             });
                         return service;
                     })
@@ -78,21 +270,21 @@
                         return service.getCharacteristic(uuid_wifi_config_tx)
                     })
                     .then(characteristic => {
-                        Logger.log('Initiate WiFi Scan');
+                        // Logger.log('Initiate WiFi Scan');
                         var scan_msg = {
                             msg_type: "scan",
                         }
                         var message_str = JSON.stringify(scan_msg);
                         var bytes = encoder.encode(message_str);
-                        Logger.log('TX: ' + JSON.stringify(scan_msg));
+                        // Logger.log('TX: ' + JSON.stringify(scan_msg));
                         return characteristic.writeValue(bytes);
                         // return characteristic.writeValue(cmd_wifi_scan)
                     })
                     .catch(error => {
-                        Logger.log('Argh! ' + error);
+                        Logger.log('Try Again! ' + error.name);
                     })
             } else {
-                Logger.log('Not connected to device!');
+                Logger.log('Try Again! Not connected to Nunam Device!');
             }
         }
 
@@ -109,22 +301,43 @@
                             ssid: document.getElementById('ssid').value,
                             password: document.getElementById('password').value,
                         }
-                        Logger.log('Configure WiFi Credentials for network \"' + credentials_msg.ssid + '\"');
+                        // Logger.log('Configure WiFi Credentials for network \"' + credentials_msg.ssid + '\"');
                         var message_str = JSON.stringify(credentials_msg);
                         var bytes = encoder.encode(message_str);
-                        Logger.log('TX: ' + JSON.stringify(credentials_msg));
+                        // Logger.log('TX: ' + JSON.stringify(credentials_msg));
+                        var conn_wifi_message = credentials_msg.ssid
+                        var ssid_pass = credentials_msg.password
+
+
+                        document.getElementById('scan_wifi_next_btn').style.display = "block";
+                        document.getElementById('config_complete').style.display = "block";
+                        document.getElementById('scan_wifi_disable').style.display = "none";
+
+
+                        var connectionMsgElement = document.getElementById('wifi_connection-msg');
+                        connectionMsgElement.style.display = 'block';
+                        connectionMsgElement.textContent = conn_wifi_message;
+
+                        var connectionMsgElement = document.getElementById('wifi_pass');
+                        connectionMsgElement.style.display = 'block';
+                        connectionMsgElement.textContent = ssid_pass;
+
+
+
+
                         return characteristic.writeValue(bytes);
                     })
                     .catch(error => {
-                        Logger.log('Argh! ' + error);
+                        Logger.log('Try Again! ' + error.name);
                     })
             } else {
-                Logger.log('Not connected to device!');
+                Logger.log('Try Again! Not connected to Nunam Device!');
             }
         }
 
         function onConnectButtonClick() {
             Logger.log('Requesting Bluetooth Device...');
+            var message = ''
 
             navigator.bluetooth.requestDevice({
                 filters: [{
@@ -133,20 +346,34 @@
                 }],
             })
                 .then(device => {
-                    Logger.log('Connecting to ' + device.name + '...');
-                    device.addEventListener('gattserverdisconnected', onDisconnected);
+                    // Logger.log('Connecting to ' + device.name + '...');
+                    message = 'Connected With Nunam Device: ' + device.name
+                    // device.addEventListener('gattserverdisconnected', onDisconnected);
                     argon_ble_device = device;
                     return device.gatt.connect();
                 })
                 .then(server => {
-                    Logger.log('Connected!');
+                    // Logger.log('Connected!');
                     document.getElementById('form_wifi_scan').style.display = "block";
                     document.getElementById('form_wifi_config').style.display = "block";
-                    document.getElementById('wifi_scan_btn').disabled = false;
-                    document.getElementById('connect_btn').value = "Disconnect from device";
+                    // document.getElementById('wifi_scan_btn').disabled = false;
+                    // document.getElementById('connect_btn').value = "Disconnect from Argon";
+
+
+                    var connectionMsgElement = document.getElementById('connection-msg');
+                    connectionMsgElement.style.display = 'block';
+                    connectionMsgElement.textContent = message;
+
+                    document.getElementById('permissions_text').style.display = "none";
+                    document.getElementById('form_connect').style.display = "none";
+                    document.getElementById('first_next_btn').style.display = "block";
+                    Logger.clearLog();
+
+
+
                 })
                 .catch(error => {
-                    Logger.log('Argh! ' + error);
+                    Logger.log('Try Again! ' + error.name);
                     argon_ble_device = null;
                 });
         }
@@ -155,6 +382,22 @@
             if (argon_ble_device) {
                 Logger.log('Disconnecting...');
                 argon_ble_device.gatt.disconnect();
+
+                argon_ble_device = null;
+                // Clear SSID list
+                var ssid_list = document.getElementById("ssid");
+                while (ssid_list.firstChild) {
+                    ssid_list.removeChild(ssid_list.firstChild);
+                }
+                var password = document.getElementById("password");
+                password.value = "";
+                // document.getElementById('connect_btn').value = "Connect to Argon";
+                ssids = [];
+                console.log(ssids)
+                console.log(password.value)
+                console.log(argon_ble_device)
+
+
             }
         }
 
@@ -166,7 +409,7 @@
                 var obj = JSON.parse(result_str);
                 if (obj) {
                     if (obj.msg_t == "scan_resp") {
-                        Logger.log('RX: \"' + result_str + '\"');
+                        // Logger.log('RX: \"' + result_str + '\"');
                         if (obj.ssid != "") {
                             var ssid_list = document.getElementById("ssid");
                             var ssid_string = obj.ssid + ' (' + obj.sec + ')';
@@ -179,20 +422,24 @@
                                 document.getElementById('ssid').disabled = false;
                                 document.getElementById('password').disabled = false;
                                 document.getElementById('ssid').dispatchEvent(new Event('change')); // Force update the submit button
+
+                                document.getElementById('after_scan_wifi').style.display = "block";
+                                document.getElementById('form_wifi_scan').style.display = "none";
+
                             }
                         }
                     } else {
-                        Logger.log('Unknown message received: \"' + result_str + '\"');
+                        // Logger.log('Unknown message received: \"' + result_str + '\"');
                     }
                 }
             } catch (error) {
-                Logger.log('Error: ' + error);
+                Logger.log('Try Again! ' + error.name);
             }
         }
 
         function onDisconnected(event) {
             const device = event.target;
-            Logger.log(`Device ${device.name} is disconnected.`);
+            // Logger.log(`Device ${device.name} is disconnected.`);
             argon_ble_device = null;
             resetUI();
         }
@@ -204,7 +451,7 @@
             document.getElementById('ssid').disabled = true;
             document.getElementById('password').disabled = true;
             document.getElementById('submit_credentials_btn').disabled = true;
-            document.getElementById('wifi_scan_btn').disabled = true;
+            // document.getElementById('wifi_scan_btn').disabled = true;
 
             // Clear SSID list
             var ssid_list = document.getElementById("ssid");
@@ -215,13 +462,13 @@
             var password = document.getElementById("password");
             password.value = "";
 
-            document.getElementById('connect_btn').value = "Connect to device";
+            // document.getElementById('connect_btn').value = "Connect to Argon";
 
             ssids = [];
         }
 
         // Connect to Argon button handler
-        document.querySelector('#form_connect').addEventListener('submit', function (event) {
+        document.querySelector('#form_connect').addEventListener('click', function (event) {
             event.stopPropagation();
             event.preventDefault();
 
@@ -231,20 +478,22 @@
                     onDisconnectButtonClick();
                 } else {
                     // Connect
-                    Logger.clearLog();
+
                     onConnectButtonClick();
                 }
             } else {
-                Logger.log('Error: Web Bluetooth API is not available. Please make sure the "Experimental Web Platform features" flag is enabled.');
+                // Logger.log('Error: Web Bluetooth API is not available. Please make sure the "Experimental Web Platform features" flag is enabled.');
+                Logger.log('Web Bluetooth API is not available in your Device.');
             }
         });
 
         // Scan for networks button handler
-        document.querySelector('#form_wifi_scan').addEventListener('submit', function (event) {
+        document.querySelector('#form_wifi_scan').addEventListener('click', function (event) {
             event.stopPropagation();
             event.preventDefault();
 
             // Reset UI State if button is clicked (don't want to duplicate networks)
+            Logger.clearLog();
             document.getElementById('ssid').disabled = true;
             document.getElementById('password').disabled = true;
             document.getElementById('submit_credentials_btn').disabled = true;
@@ -264,9 +513,10 @@
         });
 
         // Submit credentials button handler
-        document.querySelector('#form_wifi_config').addEventListener('submit', function (event) {
+        document.querySelector('#form_wifi_config').addEventListener('click', function (event) {
             event.stopPropagation();
             event.preventDefault();
+            Logger.clearLog();
             onSubmitCredentialsButtonClick();
         });
 
@@ -296,6 +546,7 @@
         });
 
     </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
