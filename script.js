@@ -190,7 +190,7 @@ function onSubmitCredentialsButtonClick() {
                 return characteristic.writeValue(bytes);
             })
             .catch(error => {
-                Logger.log('Try Again! ' + error.name);
+                Logger.log('Try Again! ');
             })
     } else {
         Logger.log('Try Again! Not connected to Nunam Device!');
@@ -235,7 +235,7 @@ function onConnectButtonClick() {
 
         })
         .catch(error => {
-            Logger.log('Try Again! ' + error.name);
+            Logger.log('Try Again! ' );
             argon_ble_device = null;
         });
 }
@@ -305,7 +305,7 @@ function rxDataHandler(event) {
             }
         }
     } catch (error) {
-        Logger.log('Try Again! ' + error.name);
+        Logger.log('Try Again! ');
     }
 }
 
